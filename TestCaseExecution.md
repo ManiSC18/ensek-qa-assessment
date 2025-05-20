@@ -9,7 +9,7 @@ To verify that the application handles invalid input (negative fuel quantity) gr
 Steps Taken:
 1. Navigated to the "Buy Energy" page from the homepage.
 2. Selected a valid fuel type (e.g., Gas).
-3. Entered an invalid quantity: -100
+3. Entered an invalid quantity: -100 in the 'Number of Units Required' text input
 4. Clicked the "Buy" button.
 
 Expected Result:
