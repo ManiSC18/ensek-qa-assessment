@@ -15,6 +15,7 @@ ENSEK Software Tester Assessment - Task 1: Test Plan Creation
     
    - Out of scope:
        - Backend validation through DB
+       - Performance Testing
        - Authorization tests (since there are no login tokens)
        - Restricted /reset endpoint (returns 401 on swagger)
     
@@ -37,10 +38,11 @@ TC7: Attempt to access the /reset endpoint and note that it returns 401 Unauthor
    - Postman - API Test Execution and Assertions
    - Github - For Version Control and Submission
   
-7. Assumptions:
+7. Assumptions & Constraints:
    - /reset endpoint is not available to candidate users
    - No login or token based auth is required for valid endpoints
    - Test environment data may persist across test runs (unless reset through UI)
+   - 
   
 8. Defect Reporting:
    - Defects are recorded manually with:
