@@ -1,0 +1,30 @@
+Defect – Order Not Reflected in `/orders` API Response
+
+Title
+Successful fuel purchase does not persist to `/orders` endpoint
+
+Description
+When a fuel purchase is made using the `PUT /buy/{id}/{quantity}` endpoint, the response confirms the purchase and returns an `orderId`. However, this order is not reflected in the response from the `GET /orders` endpoint, preventing downstream verification.
+
+Steps to Reproduce
+1. Call `PUT /buy/1/2980` (or similar) to purchase fuel.
+2. Note the `orderId` in the success response:
+{
+    "message": "You have purchased 2995 m³ at a cost of 1.7000000000000002 there are 5 units remaining. Your order id is 891ddaf2-6d46-4ad8-9079-2c2bb99607b9."
+}
+3. Call `GET /orders`
+4. Observe that the returned list does not contain an order with this ID or matching details.
+
+Expected Result
+The new order should be included in the `/orders` list, containing the matching `id`, `fuel`, and `quantity`.
+
+Actual Result
+The new order is not present in the `/orders` list, despite a successful response from the purchase request.
+
+Impact
+- Prevents automated or manual validation of the purchase.
+- Affects the reliability of the order-tracking functionality.
+- Breaks API contract expectations between `PUT /buy` and `GET /orders`.
+
+Severity
+Medium – Affects critical end-to-end test path and API trustworthiness.
