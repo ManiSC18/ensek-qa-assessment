@@ -24,34 +24,32 @@ ENSEK Software Tester Assessment - Task 1: Test Plan Creation
    - Negative Testing
    - Basic automation via Postman Collection
   
-4. Test Scenarios:
-  | ID  | Scenario Description                                   | Type           |
-  | --- | ------------------------------------------------------ | -------------- |
-  | TC1 | Verify navigation menu buttons (Home, About, Contact)  | UI Functional  |
-  | TC2 | Verify Buy Energy page loads and allows input          | UI Functional  |
-  | TC3 | Place order via Buy button (valid fuel + quantity)     | UI + API       |
-  | TC4 | Attempt to buy with invalid data (e.g., negative qty)  | UI Negative    |
-  | TC5 | Verify `/orders` returns all orders with expected info | API Validation |
-  | TC6 | Buy multiple fuel types and confirm order count        | API Functional |
-  | TC7 | Attempt `/reset` and handle 401 gracefully             | API (Skipped)  |
+4. Test Scenarios (Examples):
+TC1: Verify that all top menu navigation buttons ('Home', 'About', 'Contact', 'Register', 'Login') are clickable and lead to the correct pages. (UI Navigation / Functional Test)
+TC2: Verify that the 'Buy Energy' button navigates to the correct page and displays fuel types and quantity input fields. (UI Functional Test)
+TC3: Place a valid fuel order (e.g. select fuel type and positive quantity) and confirm that a success message with order ID is shown. (UI + API Integration Test)
+TC4: Attempt to buy fuel with invalid input (e.g. zero or negative quantity) and verify appropriate error handling. (UI Negative Test)
+TC5: Use the /orders API endpoint to verify that previous purchases are listed with correct fuel type, quantity, and timestamp. (API Functional Test)
+TC6: Place multiple orders of different fuel types and confirm that all are reflected in /orders with accurate data. (API Validation Test)
+TC7: Attempt to access the /reset endpoint and note that it returns 401 Unauthorized — assume it's not accessible to candidates. (API Security / Exploratory Test)
 
-5. Tools and Technologies
+6. Tools and Technologies
    - Postman - API Test Execution and Assertions
    - Github - For Version Control and Submission
   
-6. Assumptions:
+7. Assumptions:
    - /reset endpoint is not available to candidate users
    - No login or token based auth is required for valid endpoints
    - Test environment data may persist across test runs (unless reset through UI)
   
-7. Defect Reporting:
+8. Defect Reporting:
    - Defects are recorded manually with:
         - Title
         - Steps to reproduce
         - Expected v Actual result
         - Screenshots or API responses
     
-8. Test Evidence:
+9. Test Evidence:
    - Screenshots stored in /screenshots/
    - API Test results in /api-tests/
    - Collection shared as .json in /postman-collection/
