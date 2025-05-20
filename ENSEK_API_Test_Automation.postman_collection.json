@@ -1,0 +1,328 @@
+{
+	"info": {
+		"_postman_id": "55744c7f-941d-4fb7-87c7-ff01f21dade2",
+		"name": "ENSEK API Test Automation",
+		"description": "A collection to store the API tests defined by the ENSEK Technical Assessment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45121417",
+		"_collection_link": "https://manrajchhokar-3863579.postman.co/workspace/Manraj-Chhokar's-Workspace~a5a7f314-9f55-4a83-8179-17de166e1885/collection/45121417-55744c7f-941d-4fb7-87c7-ff01f21dade2?action=share&source=collection_link&creator=45121417"
+	},
+	"item": [
+		{
+			"name": "Reset Test Data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://qacandidatetest.ensek.io/ENSEK/reset",
+					"protocol": "https",
+					"host": [
+						"qacandidatetest",
+						"ensek",
+						"io"
+					],
+					"path": [
+						"ENSEK",
+						"reset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Buy Energy",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Fuel was ordered successfully\", () => {",
+							"    const json = pm.response.json();",
+							"    pm.expect(json).to.have.property(\"message\");",
+							"",
+							"    const orderIdRegex = /order id is ([\\w-]{36})\\./i;",
+							"    const match = json.message.match(orderIdRegex);",
+							"    ",
+							"    pm.expect(match, \"Order ID pattern match\").to.not.be.null;",
+							"});",
+							"",
+							"pm.test(\"Order ID exists in confirmation\", function () {",
+							"  const message = pm.response.json().message;",
+							"  pm.expect(message).to.include(\"order id\");",
+							"});",
+							"",
+							"const response = pm.response.json();",
+							"const orderIdMatch = response.message.match(/order id is ([\\w-]+)/);",
+							"const orderId = orderIdMatch ? orderIdMatch[1] : null;",
+							"",
+							"pm.test(\"Order ID extracted\", () => {",
+							"  console.log(\"Order ID:\", orderId);",
+							"  pm.expect(orderId).to.not.be.null;",
+							"  pm.environment.set(\"last_order_id\", orderId);",
+							"  pm.environment.set(\"last_order_fuel\", \"gas\"); // or the correct fuel type",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/buy/{{energy_id}}/{{quantity}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"buy",
+						"{{energy_id}}",
+						"{{quantity}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Orders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Orders list is returned\", () => {",
+							"    const json = pm.response.json();",
+							"    pm.expect(json.length).to.be.above(0);",
+							"});",
+							"",
+							"const orders = pm.response.json();",
+							"const expectedOrderId = pm.environment.get(\"last_order_id\");",
+							"const expectedFuel = pm.environment.get(\"last_order_fuel\");",
+							"",
+							"console.log(\"Looking for Order ID:\", expectedOrderId);",
+							"console.log(\"Expected fuel type:\", expectedFuel);",
+							"",
+							"const match = orders.find(o =>",
+							"  o.id === expectedOrderId &&",
+							"  o.fuel.toLowerCase() === expectedFuel.toLowerCase()",
+							");",
+							"",
+							"pm.test(\"Recent order is present in /orders\", function () {",
+							"  console.log(\"Matched order:\", match);",
+							"  pm.expect(match, \"Order not found or details mismatch\").to.not.be.undefined;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Energy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 200\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"const body = pm.response.json();",
+							"pm.test(\"Contains all fuel types\", function () {",
+							"  pm.expect(body).to.have.all.keys('electric', 'gas', 'nuclear', 'oil');",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/energy",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"energy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Buy Energy With Negative Quantity",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Should not accept negative quantity\", function () {",
+							"  const message = pm.response.json().message;",
+							"  pm.expect(message).to.not.include(\"order id\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/buy/1/-1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"buy",
+						"1",
+						"-1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Past Orders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Count orders created before now\", function () {",
+							"    const orders = pm.response.json();",
+							"",
+							"    let count = 0;",
+							"    const now = new Date();",
+							"",
+							"    orders.forEach(order => {",
+							"        const orderDate = new Date(order.time);",
+							"        if (orderDate < now) {",
+							"            count++;",
+							"        }",
+							"    });",
+							"",
+							"    console.log(`✅ Orders created before now: ${count}`);",
+							"    pm.environment.set(\"pastOrderCount\", count);",
+							"",
+							"    // Optional: fail test if no such orders exist",
+							"    pm.expect(count).to.be.above(0);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://qacandidatetest.ensek.io/ENSEK",
+			"type": "string"
+		}
+	]
+}
