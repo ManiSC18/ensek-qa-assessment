@@ -20,3 +20,8 @@ Actual Result:
 1. No error message was shown, instead, a success message was shown 'Thank you for your purchase of -100 units of Gas We have popped it in the post and it will be with you shortly.
 There are now 3100 units of Gas left in our stores.'
 2. The negative input was allowed, and the number of units of gas were incremented by 100.
+
+Evidence:
+1. Screenshot of the filled form with -100 as quantity: screenshots/negative_quantity_input.png
+2. Screenshot of the error message -> screenshots/negative_quantity_confirmation_message.png
+3. Screenshot of the quantity change on the 'Buy' screen -> screenshots/negative_quantity_units_change.png
